@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class JuegoRompecabezas {
     public static void main(String[] args) {
-        Imagen imagen = new Imagen("imagen.jpg");
+        Imagen imagen = new Imagen("C:\\Users\\Pedro\\Desktop\\Ingenieria informatica\\Primero\\Segundo semestre\\Programacion 2\\NetBeansProjects\\TallerFinal\\ProyectoFinal\\imagen.png");
         Puzzle juego = new Puzzle(imagen);
         juego.desordenar();
         juego.imprimirPorTexto();
