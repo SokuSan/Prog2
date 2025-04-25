@@ -1,4 +1,4 @@
-package proyectofinal;
+package paqueteprincipal;
 
 import java.awt.Image;
 import java.util.*;
@@ -69,14 +69,13 @@ public class Puzzle {
         turnos = 0;
     }
 
-
     public boolean mover(char direccion) {
         int dx = 0, dy = 0;
         switch (direccion) {
-            case 'w': dx = -1; break;
-            case 's': dx = 1; break;
-            case 'a': dy = -1; break;
-            case 'd': dy = 1; break;
+            case 's': dx = -1; break;
+            case 'w': dx = 1; break;
+            case 'd': dy = -1; break;
+            case 'a': dy = 1; break;
             default: return false;
         }
 
@@ -84,7 +83,6 @@ public class Puzzle {
         int nuevaColumna = columnaVacia + dy;
 
         if (nuevaFila < 0 || nuevaFila >= 3 || nuevaColumna < 0 || nuevaColumna >= 3) {
-            System.out.println("Movimiento Incorrecto: Fuera del rompecabezas");
             return false;
         }
 
@@ -114,14 +112,16 @@ public class Puzzle {
         return true;
     }
 
-    public void imprimirPorTexto() {
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                int valor = casillas[i][j].getValor();
-                System.out.print((valor == 0 ? " " : valor) + " ");
-            }
-            System.out.println();
-        }
+    public Casilla getCasilla(int fila, int columna) {
+        return casillas[fila][columna];
+    }
+
+    public int getFilaVacia() {
+        return filaVacia;
+    }
+
+    public int getColumnaVacia() {
+        return columnaVacia;
     }
 
     public int getTurnos() {

@@ -1,4 +1,4 @@
-package proyectofinal;
+package paqueteprincipal;
 
 import java.awt.Image;
 
