@@ -2,9 +2,9 @@ package paqueteprincipal;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.InputStream;
+import java.io.File;
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
+import java.io.IOException;
 
 public class Imagen {
     private Image imagenOriginal;
@@ -22,20 +22,23 @@ public class Imagen {
 
     private Image cargarImagen(String ruta) {
     try {
-        InputStream is = getClass().getResourceAsStream(ruta);
-        if (is == null) {
-            System.err.println("No se encontró el recurso: " + ruta);
+        File archivo = new File(ruta);
+        if (!archivo.exists()) {
+            System.err.println("No se encontró el archivo: " + ruta);
             return null;
         }
-        return ImageIO.read(is);
-    } catch (Exception e) {
+        BufferedImage imagen = ImageIO.read(archivo);
+        if (imagen == null) {
+            System.err.println("No se pudo leer el archivo como imagen: " + ruta);
+            return null;
+        }
+        return imagen;
+    } catch (IOException e) {
         System.err.println("Error al cargar la imagen: " + e.getMessage());
         e.printStackTrace();
         return null;
-        }
     }
-
-
+}
 
     private Image[][] dividirEnFragmentos(Image img) {
         int filas = 3, columnas = 3;
@@ -45,9 +48,7 @@ public class Imagen {
         if (!(img instanceof BufferedImage)) {
             BufferedImage temp = new BufferedImage(
                 img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = temp.createGraphics();
-            g2d.drawImage(img, 0, 0, null);
-            g2d.dispose();
+            temp.getGraphics().drawImage(img, 0, 0, null);
             img = temp;
         }
 

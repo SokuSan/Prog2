@@ -3,6 +3,9 @@ package paqueteprincipal;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 
 public class JuegoRompecabezas extends JFrame {
     private Puzzle juego;
@@ -12,7 +15,7 @@ public class JuegoRompecabezas extends JFrame {
     private int filas = 3, columnas = 3;
 
     public JuegoRompecabezas() {
-        imagen = new Imagen("/paqueteprincipal/imagen.png");
+        imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png");
         juego = new Puzzle(imagen);
 
         // Configuración de la ventana
@@ -20,6 +23,9 @@ public class JuegoRompecabezas extends JFrame {
         setSize(400, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        // Agregar el KeyListener para escuchar las teclas
+        agregarTeclado();
 
         // Crear el menú sin la opción "Opciones"
         JMenuBar menuBar = new JMenuBar();
@@ -91,7 +97,7 @@ public class JuegoRompecabezas extends JFrame {
 
     private void moverCasilla(int fila, int columna) {
         char direccion = ' ';
-        // Movimiento de casilla dependiendo de su posición
+        // Movimiento de casilla dependiendo de su posición con el clic del ratón
         if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() - 1) {
             direccion = 'd'; // Mover hacia la derecha
         } else if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() + 1) {
@@ -105,43 +111,91 @@ public class JuegoRompecabezas extends JFrame {
         if (direccion != ' ' && juego.mover(direccion)) {
             actualizarTablero();
             if (juego.estaResuelto()) {
+                // Reproducir sonido cuando se resuelve el rompecabezas
+                reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\completado.wav");
                 JOptionPane.showMessageDialog(this, "¡Felicidades! Has resuelto el rompecabezas.", "Juego Finalizado", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
 
     private void actualizarTablero() {
-    for (int i = 0; i < filas; i++) {
-        for (int j = 0; j < columnas; j++) {
-            int valor = juego.getCasilla(i, j).getValor();
-            JLabel etiqueta = etiquetasCasillas[i][j];
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                int valor = juego.getCasilla(i, j).getValor();
+                JLabel etiqueta = etiquetasCasillas[i][j];
 
-            if (valor == 0) {
-                etiqueta.setIcon(null);
-                etiqueta.setText("");
-                etiqueta.setBackground(Color.LIGHT_GRAY);
-            } else {
-                // Obtener fila y columna originales a partir del valor
-                int filaFragmento = (valor - 1) / columnas;
-                int colFragmento = (valor - 1) % columnas;
-
-                Image fragmento = imagen.getFragmento(filaFragmento, colFragmento);
-
-                if (fragmento != null) {
-                    ImageIcon icono = new ImageIcon(fragmento.getScaledInstance(
-                        etiqueta.getWidth(), etiqueta.getHeight(), Image.SCALE_SMOOTH));
-                    etiqueta.setIcon(icono);
-                    etiqueta.setText(""); // No mostrar texto
-                    etiqueta.setBackground(null);
-                } else {
+                if (valor == 0) {
                     etiqueta.setIcon(null);
-                    etiqueta.setText("?");
+                    etiqueta.setText("");
+                    etiqueta.setBackground(Color.LIGHT_GRAY);
+                } else {
+                    // Obtener fila y columna originales a partir del valor
+                    int filaFragmento = (valor - 1) / columnas;
+                    int colFragmento = (valor - 1) % columnas;
+
+                    Image fragmento = imagen.getFragmento(filaFragmento, colFragmento);
+
+                    if (fragmento != null) {
+                        ImageIcon icono = new ImageIcon(fragmento.getScaledInstance(
+                            etiqueta.getWidth(), etiqueta.getHeight(), Image.SCALE_SMOOTH));
+                        etiqueta.setIcon(icono);
+                        etiqueta.setText(""); // No mostrar texto
+                        etiqueta.setBackground(null);
+                    } else {
+                        etiqueta.setIcon(null);
+                        etiqueta.setText("?"); // Si no tiene imagen, muestra un signo de interrogación
+                    }
                 }
             }
         }
     }
-}
 
+    // Agregar el KeyListener para el teclado
+    private void agregarTeclado() {
+        this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                char direccion = ' ';
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_W: // Tecla W
+                        direccion = 'w';
+                        break;
+                    case KeyEvent.VK_S: // Tecla S
+                        direccion = 's';
+                        break;
+                    case KeyEvent.VK_A: // Tecla A
+                        direccion = 'a';
+                        break;
+                    case KeyEvent.VK_D: // Tecla D
+                        direccion = 'd';
+                        break;
+                }
+
+                if (direccion != ' ' && juego.mover(direccion)) {
+                    actualizarTablero();
+                    if (juego.estaResuelto()) {
+                        // Reproducir sonido cuando se resuelve el rompecabezas
+                        reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\completado.wav");
+                        JOptionPane.showMessageDialog(JuegoRompecabezas.this, "¡Felicidades! Has resuelto el rompecabezas.", "Juego Finalizado", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }
+            }
+        });
+        this.setFocusable(true);  // Asegúrate de que el JFrame es enfocable para recibir eventos del teclado
+    }
+
+    // Método para reproducir sonido
+    private void reproducirSonido(String archivo) {
+        try {
+            File file = new File(archivo);
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JuegoRompecabezas());
