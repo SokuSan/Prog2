@@ -97,6 +97,7 @@ public class JuegoRompecabezas extends JFrame {
 
     private void moverCasilla(int fila, int columna) {
         char direccion = ' ';
+        reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\movimiento.wav");
         // Movimiento de casilla dependiendo de su posición con el clic del ratón
         if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() - 1) {
             direccion = 'd'; // Mover hacia la derecha
@@ -156,6 +157,7 @@ public class JuegoRompecabezas extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 char direccion = ' ';
+                reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\movimiento.wav");
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_W: // Tecla W
                         direccion = 'w';
@@ -185,17 +187,27 @@ public class JuegoRompecabezas extends JFrame {
     }
 
     // Método para reproducir sonido
-    private void reproducirSonido(String archivo) {
-        try {
-            File file = new File(archivo);
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            e.printStackTrace();
-        }
+    // Método para reproducir sonido corregido
+private void reproducirSonido(String archivo) {
+    try {
+        File file = new File(archivo);
+        AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+        Clip clip = AudioSystem.getClip();
+        clip.open(audioStream);
+        clip.start();
+
+        // Espera a que termine de reproducirse
+        clip.addLineListener(event -> {
+            if (event.getType() == LineEvent.Type.STOP) {
+                clip.close();
+            }
+        });
+
+    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        e.printStackTrace();
     }
+}
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JuegoRompecabezas());
