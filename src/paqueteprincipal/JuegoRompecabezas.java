@@ -34,13 +34,13 @@ public class JuegoRompecabezas extends JFrame {
 
         // Crear el menú sin la opción "Opciones"
         JMenuBar menuBar = new JMenuBar();
-        JMenuItem resolverItem = new JMenuItem("Iniciar");
-        JMenuItem iniciarItem = new JMenuItem("Resolver");
+        JMenuItem resolverItem = new JMenuItem("Resolver");
+        JMenuItem iniciarItem = new JMenuItem("Inicializar");
         JMenuItem salirItem = new JMenuItem("Salir");
 
         // Añadir los elementos directamente al menuBar
-        menuBar.add(resolverItem);
         menuBar.add(iniciarItem);
+        menuBar.add(resolverItem);
         menuBar.add(salirItem);
 
         setJMenuBar(menuBar);
