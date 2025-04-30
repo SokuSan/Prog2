@@ -15,8 +15,13 @@ public class JuegoRompecabezas extends JFrame {
     private int filas = 3, columnas = 3;
 
     public JuegoRompecabezas() {
-        imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png");
+        
+        //imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png");
+        imagen = new Imagen("C:\\Users\\Pedro\\Desktop\\Ingenieria informatica\\Primero\\Segundo semestre\\Programacion 2\\NetBeansProjects\\TallerFinal\\src\\recursos\\imagen.png");
         juego = new Puzzle(imagen);
+        
+        // Cargar los sonidos
+        ReproductorSonido.cargarSonidos();
 
         // Configuración de la ventana
         setTitle("Juego de Rompecabezas");
@@ -29,20 +34,20 @@ public class JuegoRompecabezas extends JFrame {
 
         // Crear el menú sin la opción "Opciones"
         JMenuBar menuBar = new JMenuBar();
-        JMenuItem iniciarItem = new JMenuItem("Iniciar");
-        JMenuItem resolverItem = new JMenuItem("Resolver");
+        JMenuItem resolverItem = new JMenuItem("Iniciar");
+        JMenuItem iniciarItem = new JMenuItem("Resolver");
         JMenuItem salirItem = new JMenuItem("Salir");
 
         // Añadir los elementos directamente al menuBar
-        menuBar.add(iniciarItem);
         menuBar.add(resolverItem);
+        menuBar.add(iniciarItem);
         menuBar.add(salirItem);
 
         setJMenuBar(menuBar);
 
         // Acción de los menús
-        iniciarItem.addActionListener(e -> iniciarJuego());
         resolverItem.addActionListener(e -> resolverJuego());
+        iniciarItem.addActionListener(e -> iniciarJuego());
         salirItem.addActionListener(e -> System.exit(0));
 
         // Panel del tablero
@@ -97,7 +102,7 @@ public class JuegoRompecabezas extends JFrame {
 
     private void moverCasilla(int fila, int columna) {
         char direccion = ' ';
-        reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\movimiento.wav");
+        ReproductorSonido.reproducirMovimiento();
         // Movimiento de casilla dependiendo de su posición con el clic del ratón
         if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() - 1) {
             direccion = 'd'; // Mover hacia la derecha
@@ -113,7 +118,7 @@ public class JuegoRompecabezas extends JFrame {
             actualizarTablero();
             if (juego.estaResuelto()) {
                 // Reproducir sonido cuando se resuelve el rompecabezas
-                reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\completado.wav");
+                ReproductorSonido.reproducirCompletado();
                 JOptionPane.showMessageDialog(this, "¡Felicidades! Has resuelto el rompecabezas.", "Juego Finalizado", JOptionPane.INFORMATION_MESSAGE);
             }
         }
@@ -157,7 +162,7 @@ public class JuegoRompecabezas extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 char direccion = ' ';
-                reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\movimiento.wav");
+                ReproductorSonido.reproducirMovimiento();
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_W: // Tecla W
                         direccion = 'w';
@@ -177,7 +182,7 @@ public class JuegoRompecabezas extends JFrame {
                     actualizarTablero();
                     if (juego.estaResuelto()) {
                         // Reproducir sonido cuando se resuelve el rompecabezas
-                        reproducirSonido("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\completado.wav");
+                        ReproductorSonido.reproducirCompletado();
                         JOptionPane.showMessageDialog(JuegoRompecabezas.this, "¡Felicidades! Has resuelto el rompecabezas.", "Juego Finalizado", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }
@@ -185,30 +190,7 @@ public class JuegoRompecabezas extends JFrame {
         });
         this.setFocusable(true);  // Asegúrate de que el JFrame es enfocable para recibir eventos del teclado
     }
-
-    // Método para reproducir sonido
-    // Método para reproducir sonido corregido
-private void reproducirSonido(String archivo) {
-    try {
-        File file = new File(archivo);
-        AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-        Clip clip = AudioSystem.getClip();
-        clip.open(audioStream);
-        clip.start();
-
-        // Espera a que termine de reproducirse
-        clip.addLineListener(event -> {
-            if (event.getType() == LineEvent.Type.STOP) {
-                clip.close();
-            }
-        });
-
-    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-        e.printStackTrace();
-    }
-}
-
-
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JuegoRompecabezas());
     }
