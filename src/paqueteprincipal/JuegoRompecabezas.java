@@ -13,6 +13,10 @@ public class JuegoRompecabezas extends JFrame {
     private JLabel[][] etiquetasCasillas;
     private Imagen imagen;
     private int filas = 3, columnas = 3;
+    
+    private Timer timer;
+    private int elapsedTime = 0; // segundos
+    private JLabel timerLabel;
 
     public JuegoRompecabezas() {
         
@@ -58,6 +62,12 @@ public class JuegoRompecabezas extends JFrame {
 
         // Mostrar el tablero vacío al principio
         add(panelTablero, BorderLayout.CENTER);
+        
+        //temporizador
+        timerLabel = new JLabel("Tiempo: 00:00");
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
+        timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(timerLabel, BorderLayout.NORTH);
 
         // Mostrar la ventana
         setVisible(true);
@@ -93,11 +103,14 @@ public class JuegoRompecabezas extends JFrame {
     private void iniciarJuego() {
         juego.desordenar();
         actualizarTablero();
+        startTimer();
     }
 
     private void resolverJuego() {
         juego.inicializar();
         actualizarTablero();
+        startTimer();
+        stopTimer();
     }
 
     private void moverCasilla(int fila, int columna) {
@@ -117,6 +130,7 @@ public class JuegoRompecabezas extends JFrame {
         if (direccion != ' ' && juego.mover(direccion)) {
             actualizarTablero();
             if (juego.estaResuelto()) {
+                stopTimer();
                 // Reproducir sonido cuando se resuelve el rompecabezas
                 ReproductorSonido.reproducirCompletado();
                 JOptionPane.showMessageDialog(this, "¡Felicidades! Has resuelto el rompecabezas.", "Juego Finalizado", JOptionPane.INFORMATION_MESSAGE);
@@ -193,5 +207,34 @@ public class JuegoRompecabezas extends JFrame {
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JuegoRompecabezas());
+    }
+    
+    private void startTimer() {
+        if (timer != null) {
+            timer.stop(); // Por si ya hay uno corriendo
+        }
+
+        elapsedTime = 0;
+        updateTimerLabel();
+
+        timer = new Timer(1000, e -> {
+            elapsedTime++;
+            updateTimerLabel();
+        });
+
+        timer.start();
+    }
+    
+    private void stopTimer() {
+        if (timer != null) {
+            timer.stop();
+        }
+    }
+
+    private void updateTimerLabel() {
+        int minutes = elapsedTime / 60;
+        int seconds = elapsedTime % 60;
+        String timeString = String.format("%02d:%02d", minutes, seconds);
+        timerLabel.setText("Tiempo: " + timeString);
     }
 }
