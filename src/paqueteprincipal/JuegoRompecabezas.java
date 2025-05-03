@@ -12,16 +12,18 @@ public class JuegoRompecabezas extends JFrame {
     private JPanel panelTablero;
     private JLabel[][] etiquetasCasillas;
     private Imagen imagen;
-    private int filas = 3, columnas = 3;
+    private int filas, columnas;
     
     private Timer timer;
     private int elapsedTime = 0; // segundos
     private JLabel timerLabel;
 
-    public JuegoRompecabezas() {
+    public JuegoRompecabezas(int filas, int columnas) {
+        this.filas = filas;
+        this.columnas = columnas;
         
         //imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png");
-        imagen = new Imagen("C:\\Users\\Pedro\\Desktop\\Ingenieria informatica\\Primero\\Segundo semestre\\Programacion 2\\NetBeansProjects\\TallerFinal\\src\\recursos\\imagen.png");
+        imagen = new Imagen("C:\\Users\\Pedro\\Desktop\\Ingenieria informatica\\Primero\\Segundo semestre\\Programacion 2\\NetBeansProjects\\TallerFinal\\src\\recursos\\imagen.png", 3);
         juego = new Puzzle(imagen);
         
         // Cargar los sonidos
@@ -50,8 +52,16 @@ public class JuegoRompecabezas extends JFrame {
         setJMenuBar(menuBar);
 
         // Acción de los menús
+        iniciarItem.addActionListener(e -> {
+            PuzzleDialog.mostrar(this, medida -> {
+                // Aquí inicializas el puzzle con la medida escrita
+                iniciarJuego();
+                System.out.println("Puzzle de " + medida + "x" + medida);
+                // Llama aquí a tu método real:
+                // puzzle.inicializar(medida);
+            });
+        });
         resolverItem.addActionListener(e -> resolverJuego());
-        iniciarItem.addActionListener(e -> iniciarJuego());
         salirItem.addActionListener(e -> System.exit(0));
 
         // Panel del tablero
@@ -63,7 +73,7 @@ public class JuegoRompecabezas extends JFrame {
         // Mostrar el tablero vacío al principio
         add(panelTablero, BorderLayout.CENTER);
         
-        //temporizador
+        // Temporizador
         timerLabel = new JLabel("Tiempo: 00:00");
         timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -206,7 +216,7 @@ public class JuegoRompecabezas extends JFrame {
     }
     
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new JuegoRompecabezas());
+        SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));  // Aquí puedes cambiar el tamaño de filas y columnas
     }
     
     private void startTimer() {

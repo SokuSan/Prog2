@@ -8,24 +8,26 @@ public class Puzzle {
     private int filaVacia, columnaVacia;
     private int turnos;
     private Imagen imagen;
+    private int tamanio;
 
     public Puzzle(Imagen imagen) {
         this.imagen = imagen;
+        this.tamanio = imagen.getTamanio();
         inicializar(); // coloca las piezas en orden resuelto
     }
 
     public void inicializar() {
-        casillas = new Casilla[3][3];
+        casillas = new Casilla[tamanio][tamanio];
         int valor = 1;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                if (valor <= 8) {
-                    casillas[i][j] = new Casilla(valor, i, j, imagen.getFragmento(i, j));
-                    valor++;
-                } else {
-                    casillas[i][j] = new Casilla(0, i, j, null); // casilla vacía
+        for (int i = 0; i < tamanio; i++) {
+            for (int j = 0; j < tamanio; j++) {
+                if (i == tamanio - 1 && j == tamanio - 1) {
+                    casillas[i][j] = new Casilla(0, i, j, null); // Casilla vacía
                     filaVacia = i;
                     columnaVacia = j;
+                } else {
+                    casillas[i][j] = new Casilla(valor, i, j, imagen.getFragmento(i, j));
+                    valor++;
                 }
             }
         }
@@ -36,8 +38,8 @@ public class Puzzle {
         List<Casilla> lista = new ArrayList<>();
 
         // Aplanamos la matriz a una lista
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < tamanio; i++) {
+            for (int j = 0; j < tamanio; j++) {
                 lista.add(casillas[i][j]);
             }
         }
@@ -53,8 +55,8 @@ public class Puzzle {
 
         // Reconstruimos la matriz y actualizamos posiciones
         int index = 0;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < tamanio; i++) {
+            for (int j = 0; j < tamanio; j++) {
                 Casilla c = lista.get(index++);
                 c.setPosicion(i, j);
                 casillas[i][j] = c;
@@ -82,7 +84,7 @@ public class Puzzle {
         int nuevaFila = filaVacia + dx;
         int nuevaColumna = columnaVacia + dy;
 
-        if (nuevaFila < 0 || nuevaFila >= 3 || nuevaColumna < 0 || nuevaColumna >= 3) {
+        if (nuevaFila < 0 || nuevaFila >= tamanio || nuevaColumna < 0 || nuevaColumna >= tamanio) {
             return false;
         }
 
@@ -101,10 +103,12 @@ public class Puzzle {
 
     public boolean estaResuelto() {
         int valorEsperado = 1;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < tamanio; i++) {
+            for (int j = 0; j < tamanio; j++) {
                 int valor = casillas[i][j].getValor();
-                if (i == 2 && j == 2) return valor == 0;
+                if (i == tamanio - 1 && j == tamanio - 1) {
+                    return valor == 0;
+                }
                 if (valor != valorEsperado) return false;
                 valorEsperado++;
             }
@@ -126,5 +130,9 @@ public class Puzzle {
 
     public int getTurnos() {
         return turnos;
+    }
+
+    public int getTamanio() {
+        return tamanio;
     }
 }

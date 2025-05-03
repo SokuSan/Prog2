@@ -3,7 +3,7 @@ package paqueteprincipal;
 import java.awt.Image;
 
 public class Casilla {
-    private int valor; // de 1 a 8, o 0 si está vacía
+    private int valor; // de 1 a N^2 - 1, o 0 si está vacía
     private int fila, columna;  // posición en la cuadrícula
     private Image fragmento; // fragmento de imagen correspondiente
 

@@ -8,12 +8,14 @@ import java.io.IOException;
 
 public class Imagen {
     private Image imagenOriginal;
-    private Image[][] fragmentos; // Matriz 3x3 del puzzle
+    private Image[][] fragmentos; // Matriz NxN del puzzle
+    private int tamanio;
 
-    public Imagen(String rutaArchivo) {
+    public Imagen(String rutaArchivo, int tamanio) {
+        this.tamanio = tamanio;
         this.imagenOriginal = cargarImagen(rutaArchivo);
         if (this.imagenOriginal != null) {
-            this.fragmentos = dividirEnFragmentos(imagenOriginal);
+            this.fragmentos = dividirEnFragmentos(imagenOriginal, tamanio);
         } else {
             System.err.println("No se pudo cargar la imagen. fragmentos será null.");
             this.fragmentos = null;
@@ -21,28 +23,31 @@ public class Imagen {
     }
 
     private Image cargarImagen(String ruta) {
-    try {
-        File archivo = new File(ruta);
-        if (!archivo.exists()) {
-            System.err.println("No se encontró el archivo: " + ruta);
-            return null;
-        }
-        BufferedImage imagen = ImageIO.read(archivo);
-        if (imagen == null) {
-            System.err.println("No se pudo leer el archivo como imagen: " + ruta);
-            return null;
-        }
-        return imagen;
-    } catch (IOException e) {
-        System.err.println("Error al cargar la imagen: " + e.getMessage());
-        e.printStackTrace();
-        return null;
-    }
-}
+        try {
+            File archivo = new File(ruta);
+            if (!archivo.exists()) {
+                System.err.println("No se encontró el archivo: " + ruta);
+                return null;
+            }
+            BufferedImage imagen = ImageIO.read(archivo);
+            if (imagen == null) {
+                System.err.println("No se pudo leer el archivo como imagen: " + ruta);
+                return null;
+            }
 
-    private Image[][] dividirEnFragmentos(Image img) {
-        int filas = 3, columnas = 3;
-        Image[][] fragmentos = new Image[filas][columnas];
+            // Reescalar la imagen a un tamaño estándar para consistencia (opcional)
+            int TAMANO_IMAGEN = 600; // 600x600 píxeles
+            Image imagenEscalada = imagen.getScaledInstance(TAMANO_IMAGEN, TAMANO_IMAGEN, Image.SCALE_SMOOTH);
+            return imagenEscalada;
+        } catch (IOException e) {
+            System.err.println("Error al cargar la imagen: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private Image[][] dividirEnFragmentos(Image img, int tamanio) {
+        Image[][] fragmentos = new Image[tamanio][tamanio];
 
         // Convertir a BufferedImage si no lo es
         if (!(img instanceof BufferedImage)) {
@@ -53,12 +58,12 @@ public class Imagen {
         }
 
         BufferedImage imagenBuffered = (BufferedImage) img;
-        int ancho = imagenBuffered.getWidth() / columnas;
-        int alto = imagenBuffered.getHeight() / filas;
+        int ancho = imagenBuffered.getWidth() / tamanio;
+        int alto = imagenBuffered.getHeight() / tamanio;
 
-        for (int i = 0; i < filas; i++) {
-            for (int j = 0; j < columnas; j++) {
-                if (i == 2 && j == 2) {
+        for (int i = 0; i < tamanio; i++) {
+            for (int j = 0; j < tamanio; j++) {
+                if (i == tamanio - 1 && j == tamanio - 1) {
                     fragmentos[i][j] = null; // Última casilla vacía
                 } else {
                     fragmentos[i][j] = imagenBuffered.getSubimage(j * ancho, i * alto, ancho, alto);
@@ -71,5 +76,9 @@ public class Imagen {
 
     public Image getFragmento(int fila, int columna) {
         return fragmentos != null ? fragmentos[fila][columna] : null;
+    }
+
+    public int getTamanio() {
+        return tamanio;
     }
 }
