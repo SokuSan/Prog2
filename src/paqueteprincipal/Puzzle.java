@@ -13,7 +13,7 @@ public class Puzzle {
     public Puzzle(Imagen imagen) {
         this.imagen = imagen;
         this.tamanio = imagen.getTamanio();
-        inicializar(); // coloca las piezas en orden resuelto
+        inicializar();
     }
 
     public void inicializar() {
@@ -22,7 +22,7 @@ public class Puzzle {
         for (int i = 0; i < tamanio; i++) {
             for (int j = 0; j < tamanio; j++) {
                 if (i == tamanio - 1 && j == tamanio - 1) {
-                    casillas[i][j] = new Casilla(0, i, j, null); // Casilla vacía
+                    casillas[i][j] = new Casilla(0, i, j, null);
                     filaVacia = i;
                     columnaVacia = j;
                 } else {
@@ -36,24 +36,18 @@ public class Puzzle {
 
     public void desordenar() {
         List<Casilla> lista = new ArrayList<>();
-
-        // Aplanamos la matriz a una lista
         for (int i = 0; i < tamanio; i++) {
             for (int j = 0; j < tamanio; j++) {
                 lista.add(casillas[i][j]);
             }
         }
 
-        // Fisher-Yates Shuffle
         Random rand = new Random();
         for (int i = lista.size() - 1; i > 0; i--) {
             int j = rand.nextInt(i + 1);
-            Casilla temp = lista.get(i);
-            lista.set(i, lista.get(j));
-            lista.set(j, temp);
+            Collections.swap(lista, i, j);
         }
 
-        // Reconstruimos la matriz y actualizamos posiciones
         int index = 0;
         for (int i = 0; i < tamanio; i++) {
             for (int j = 0; j < tamanio; j++) {

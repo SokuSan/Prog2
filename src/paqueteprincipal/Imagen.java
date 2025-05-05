@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Imagen {
     private Image imagenOriginal;
-    private Image[][] fragmentos; // Matriz NxN del puzzle
+    private Image[][] fragmentos;
     private int tamanio;
 
     public Imagen(String rutaArchivo, int tamanio) {
@@ -34,14 +34,10 @@ public class Imagen {
                 System.err.println("No se pudo leer el archivo como imagen: " + ruta);
                 return null;
             }
-
-            // Reescalar la imagen a un tamaño estándar para consistencia (opcional)
-            int TAMANO_IMAGEN = 600; // 600x600 píxeles
-            Image imagenEscalada = imagen.getScaledInstance(TAMANO_IMAGEN, TAMANO_IMAGEN, Image.SCALE_SMOOTH);
-            return imagenEscalada;
+            int TAMANO_IMAGEN = 600;
+            return imagen.getScaledInstance(TAMANO_IMAGEN, TAMANO_IMAGEN, Image.SCALE_SMOOTH);
         } catch (IOException e) {
             System.err.println("Error al cargar la imagen: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -49,7 +45,6 @@ public class Imagen {
     private Image[][] dividirEnFragmentos(Image img, int tamanio) {
         Image[][] fragmentos = new Image[tamanio][tamanio];
 
-        // Convertir a BufferedImage si no lo es
         if (!(img instanceof BufferedImage)) {
             BufferedImage temp = new BufferedImage(
                 img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -64,7 +59,7 @@ public class Imagen {
         for (int i = 0; i < tamanio; i++) {
             for (int j = 0; j < tamanio; j++) {
                 if (i == tamanio - 1 && j == tamanio - 1) {
-                    fragmentos[i][j] = null; // Última casilla vacía
+                    fragmentos[i][j] = null;
                 } else {
                     fragmentos[i][j] = imagenBuffered.getSubimage(j * ancho, i * alto, ancho, alto);
                 }

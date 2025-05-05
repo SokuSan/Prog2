@@ -18,12 +18,12 @@ public class JuegoRompecabezas extends JFrame {
     private int elapsedTime = 0; // segundos
     private JLabel timerLabel;
 
-    public JuegoRompecabezas(int filas, int columnas) {
+    // Constructor con inicialización opcional (el booleano "iniciar" indica si se debe iniciar el juego automáticamente)
+    public JuegoRompecabezas(int filas, int columnas, boolean iniciar) {
         this.filas = filas;
         this.columnas = columnas;
         
-        //imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png");
-        imagen = new Imagen("C:\\Users\\Pedro\\Desktop\\Ingenieria informatica\\Primero\\Segundo semestre\\Programacion 2\\NetBeansProjects\\TallerFinal\\src\\recursos\\imagen.png", 3);
+        imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png", filas);
         juego = new Puzzle(imagen);
         
         // Cargar los sonidos
@@ -31,7 +31,7 @@ public class JuegoRompecabezas extends JFrame {
 
         // Configuración de la ventana
         setTitle("Juego de Rompecabezas");
-        setSize(400, 400);
+        setSize(600, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -55,10 +55,8 @@ public class JuegoRompecabezas extends JFrame {
         iniciarItem.addActionListener(e -> {
             PuzzleDialog.mostrar(this, medida -> {
                 // Aquí inicializas el puzzle con la medida escrita
-                iniciarJuego();
-                System.out.println("Puzzle de " + medida + "x" + medida);
-                // Llama aquí a tu método real:
-                // puzzle.inicializar(medida);
+                dispose(); // Cerramos la ventana anterior
+                new JuegoRompecabezas(medida, medida, true); // Ahora sí iniciarás el juego al pulsar "Inicializar"
             });
         });
         resolverItem.addActionListener(e -> resolverJuego());
@@ -81,6 +79,15 @@ public class JuegoRompecabezas extends JFrame {
 
         // Mostrar la ventana
         setVisible(true);
+
+        if (iniciar) {
+            iniciarJuego();  // Solo si se ha solicitado iniciar la partida
+        }
+    }
+
+    // Este es el constructor que ahora se usará solo para cuando inicies el juego desde main()
+    public JuegoRompecabezas(int filas, int columnas) {
+        this(filas, columnas, false);  // Llama al otro constructor sin iniciar el juego
     }
 
     private void agregarEtiquetasTablero() {
@@ -216,7 +223,7 @@ public class JuegoRompecabezas extends JFrame {
     }
     
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));  // Aquí puedes cambiar el tamaño de filas y columnas
+        SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));  // Inicializa el juego sin comenzar por defecto
     }
     
     private void startTimer() {
