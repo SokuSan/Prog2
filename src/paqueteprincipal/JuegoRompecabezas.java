@@ -3,91 +3,83 @@ package paqueteprincipal;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
+import java.time.LocalDate;
 
 public class JuegoRompecabezas extends JFrame {
+
     private Puzzle juego;
     private JPanel panelTablero;
     private JLabel[][] etiquetasCasillas;
     private Imagen imagen;
     private int filas, columnas;
-    
+
     private Timer timer;
     private int elapsedTime = 0; // segundos
     private JLabel timerLabel;
 
-    // Constructor con inicialización opcional (el booleano "iniciar" indica si se debe iniciar el juego automáticamente)
     public JuegoRompecabezas(int filas, int columnas, boolean iniciar) {
         this.filas = filas;
         this.columnas = columnas;
-        
+
         imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png", filas);
         juego = new Puzzle(imagen);
-        
-        // Cargar los sonidos
+
         ReproductorSonido.cargarSonidos();
 
-        // Configuración de la ventana
         setTitle("Juego de Rompecabezas");
         setSize(600, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Agregar el KeyListener para escuchar las teclas
         agregarTeclado();
 
-        // Crear el menú sin la opción "Opciones"
         JMenuBar menuBar = new JMenuBar();
         JMenuItem resolverItem = new JMenuItem("Resolver");
         JMenuItem iniciarItem = new JMenuItem("Inicializar");
+        JMenuItem estadisticasItem = new JMenuItem("Estadísticas");
         JMenuItem salirItem = new JMenuItem("Salir");
 
-        // Añadir los elementos directamente al menuBar
         menuBar.add(iniciarItem);
         menuBar.add(resolverItem);
+        menuBar.add(estadisticasItem);
         menuBar.add(salirItem);
 
         setJMenuBar(menuBar);
 
-        // Acción de los menús
         iniciarItem.addActionListener(e -> {
             PuzzleDialog.mostrar(this, medida -> {
-                // Aquí inicializas el puzzle con la medida escrita
-                dispose(); // Cerramos la ventana anterior
-                new JuegoRompecabezas(medida, medida, true); // Ahora sí iniciarás el juego al pulsar "Inicializar"
+                dispose();
+                new JuegoRompecabezas(medida, medida, true);
             });
         });
         resolverItem.addActionListener(e -> resolverJuego());
         salirItem.addActionListener(e -> System.exit(0));
 
-        // Panel del tablero
+        estadisticasItem.addActionListener(e -> {
+            GestorRanking.mostrarRanking(JuegoRompecabezas.this);
+        });
+
         panelTablero = new JPanel();
         panelTablero.setLayout(new GridLayout(filas, columnas));
         etiquetasCasillas = new JLabel[filas][columnas];
         agregarEtiquetasTablero();
 
-        // Mostrar el tablero vacío al principio
         add(panelTablero, BorderLayout.CENTER);
-        
-        // Temporizador
+
         timerLabel = new JLabel("Tiempo: 00:00");
         timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(timerLabel, BorderLayout.NORTH);
 
-        // Mostrar la ventana
         setVisible(true);
 
         if (iniciar) {
-            iniciarJuego();  // Solo si se ha solicitado iniciar la partida
+            iniciarJuego();
         }
     }
 
-    // Este es el constructor que ahora se usará solo para cuando inicies el juego desde main()
     public JuegoRompecabezas(int filas, int columnas) {
-        this(filas, columnas, false);  // Llama al otro constructor sin iniciar el juego
+        this(filas, columnas, false);
     }
 
     private void agregarEtiquetasTablero() {
@@ -103,7 +95,6 @@ public class JuegoRompecabezas extends JFrame {
                 final int fila = i;
                 final int columna = j;
 
-                // Acción de clic en cada casilla
                 etiqueta.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
@@ -133,24 +124,34 @@ public class JuegoRompecabezas extends JFrame {
     private void moverCasilla(int fila, int columna) {
         char direccion = ' ';
         ReproductorSonido.reproducirMovimiento();
-        // Movimiento de casilla dependiendo de su posición con el clic del ratón
+
         if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() - 1) {
-            direccion = 'd'; // Mover hacia la derecha
+            direccion = 'd';
         } else if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() + 1) {
-            direccion = 'a'; // Mover hacia la izquierda
+            direccion = 'a';
         } else if (columna == juego.getColumnaVacia() && fila == juego.getFilaVacia() - 1) {
-            direccion = 's'; // Mover hacia abajo
+            direccion = 's';
         } else if (columna == juego.getColumnaVacia() && fila == juego.getFilaVacia() + 1) {
-            direccion = 'w'; // Mover hacia arriba
+            direccion = 'w';
         }
 
         if (direccion != ' ' && juego.mover(direccion)) {
             actualizarTablero();
             if (juego.estaResuelto()) {
                 stopTimer();
-                // Reproducir sonido cuando se resuelve el rompecabezas
                 ReproductorSonido.reproducirCompletado();
-                JOptionPane.showMessageDialog(this, "¡Felicidades! Has resuelto el rompecabezas.", "Juego Finalizado", JOptionPane.INFORMATION_MESSAGE);
+
+                NombreDialog dialogo = new NombreDialog(JuegoRompecabezas.this);
+                dialogo.setVisible(true);
+                String nombre = dialogo.getNombreIngresado();
+
+                if (nombre != null) {
+                    RecordTiempo nuevo = new RecordTiempo(nombre, elapsedTime, LocalDate.now());
+                    GestorRanking.agregarNuevoTiempo(nuevo);
+                    GestorRanking.mostrarRanking(JuegoRompecabezas.this);
+                } else {
+                    JOptionPane.showMessageDialog(JuegoRompecabezas.this, "No se registró el nombre en el ranking.");
+                }
             }
         }
     }
@@ -166,7 +167,6 @@ public class JuegoRompecabezas extends JFrame {
                     etiqueta.setText("");
                     etiqueta.setBackground(Color.LIGHT_GRAY);
                 } else {
-                    // Obtener fila y columna originales a partir del valor
                     int filaFragmento = (valor - 1) / columnas;
                     int colFragmento = (valor - 1) % columnas;
 
@@ -174,20 +174,19 @@ public class JuegoRompecabezas extends JFrame {
 
                     if (fragmento != null) {
                         ImageIcon icono = new ImageIcon(fragmento.getScaledInstance(
-                            etiqueta.getWidth(), etiqueta.getHeight(), Image.SCALE_SMOOTH));
+                                etiqueta.getWidth(), etiqueta.getHeight(), Image.SCALE_SMOOTH));
                         etiqueta.setIcon(icono);
-                        etiqueta.setText(""); // No mostrar texto
+                        etiqueta.setText("");
                         etiqueta.setBackground(null);
                     } else {
                         etiqueta.setIcon(null);
-                        etiqueta.setText("?"); // Si no tiene imagen, muestra un signo de interrogación
+                        etiqueta.setText("?");
                     }
                 }
             }
         }
     }
 
-    // Agregar el KeyListener para el teclado
     private void agregarTeclado() {
         this.addKeyListener(new KeyAdapter() {
             @Override
@@ -195,16 +194,16 @@ public class JuegoRompecabezas extends JFrame {
                 char direccion = ' ';
                 ReproductorSonido.reproducirMovimiento();
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W: // Tecla W
+                    case KeyEvent.VK_W:
                         direccion = 'w';
                         break;
-                    case KeyEvent.VK_S: // Tecla S
+                    case KeyEvent.VK_S:
                         direccion = 's';
                         break;
-                    case KeyEvent.VK_A: // Tecla A
+                    case KeyEvent.VK_A:
                         direccion = 'a';
                         break;
-                    case KeyEvent.VK_D: // Tecla D
+                    case KeyEvent.VK_D:
                         direccion = 'd';
                         break;
                 }
@@ -212,23 +211,34 @@ public class JuegoRompecabezas extends JFrame {
                 if (direccion != ' ' && juego.mover(direccion)) {
                     actualizarTablero();
                     if (juego.estaResuelto()) {
-                        // Reproducir sonido cuando se resuelve el rompecabezas
+                        stopTimer();
                         ReproductorSonido.reproducirCompletado();
-                        JOptionPane.showMessageDialog(JuegoRompecabezas.this, "¡Felicidades! Has resuelto el rompecabezas.", "Juego Finalizado", JOptionPane.INFORMATION_MESSAGE);
+
+                        NombreDialog dialogo = new NombreDialog(JuegoRompecabezas.this);
+                        dialogo.setVisible(true);
+                        String nombre = dialogo.getNombreIngresado();
+
+                        if (nombre != null) {
+                            RecordTiempo nuevo = new RecordTiempo(nombre, elapsedTime, LocalDate.now());
+                            GestorRanking.agregarNuevoTiempo(nuevo);
+                            GestorRanking.mostrarRanking(JuegoRompecabezas.this);
+                        } else {
+                            JOptionPane.showMessageDialog(JuegoRompecabezas.this, "No se registró el nombre en el ranking.");
+                        }
                     }
                 }
             }
         });
-        this.setFocusable(true);  // Asegúrate de que el JFrame es enfocable para recibir eventos del teclado
+        this.setFocusable(true);
     }
-    
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));  // Inicializa el juego sin comenzar por defecto
+        SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));
     }
-    
+
     private void startTimer() {
         if (timer != null) {
-            timer.stop(); // Por si ya hay uno corriendo
+            timer.stop();
         }
 
         elapsedTime = 0;
@@ -241,7 +251,7 @@ public class JuegoRompecabezas extends JFrame {
 
         timer.start();
     }
-    
+
     private void stopTimer() {
         if (timer != null) {
             timer.stop();

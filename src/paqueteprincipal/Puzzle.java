@@ -1,6 +1,5 @@
 package paqueteprincipal;
 
-import java.awt.Image;
 import java.util.*;
 
 public class Puzzle {
