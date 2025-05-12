@@ -21,7 +21,8 @@ public class JuegoRompecabezas extends JFrame {
         this.filas = filas;
         this.columnas = columnas;
 
-        imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png", filas);
+       // imagen = new Imagen("C:\\Users\\khast\\Documents\\NetBeansProjects\\ProyectoFinal\\src\\recursos\\imagen.png", filas);
+        imagen = new Imagen("C:\\Users\\Pedro\\Desktop\\Ingenieria informatica\\Primero\\Segundo semestre\\Programacion 2\\NetBeansProjects\\TallerFinal\\src\\recursos\\imagen.png", filas);
         juego = new Puzzle(imagen);
 
         ReproductorSonido.cargarSonidos();
