@@ -82,7 +82,7 @@ public class GestorRanking {
                 pw.println(record.getNombre() + ";" + record.getSegundos() + ";" + record.getFecha());
             }
         } catch (IOException e) {
-            e.printStackTrace(); // Podrías mejorar esto mostrando un diálogo si es una app con UI
+            e.printStackTrace();
         }
     }
 }
