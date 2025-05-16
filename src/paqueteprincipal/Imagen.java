@@ -2,38 +2,51 @@ package paqueteprincipal;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.*;
 import javax.imageio.ImageIO;
-import java.io.IOException;
 
 /**
  * Clase que representa una imagen dividida en fragmentos cuadrados.
  * Utilizada para construir un puzzle de tamaño NxN.
  */
 public class Imagen {
-    
-    private Image imagenOriginal; 
-    private Image[][] fragmentos; 
-    private int tamanio; 
+
+    private Image imagenOriginal;
+    private Image[][] fragmentos;
+    private int tamanio;
 
     /**
-     * Carga una imagen desde el archivo y la divide en fragmentos.
+     * Constructor que carga la imagen desde una ruta de archivo.
      */
     public Imagen(String rutaArchivo, int tamanio) {
         this.tamanio = tamanio;
-        this.imagenOriginal = cargarImagen(rutaArchivo);
+        this.imagenOriginal = cargarImagenDesdeRuta(rutaArchivo);
         if (this.imagenOriginal != null) {
             this.fragmentos = dividirEnFragmentos(imagenOriginal, tamanio);
         } else {
-            System.err.println("No se pudo cargar la imagen. fragmentos será null.");
+            System.err.println("No se pudo cargar la imagen desde ruta. fragmentos será null.");
             this.fragmentos = null;
         }
     }
 
     /**
-     * Carga y escala una imagen desde la ruta indicada.
+     * Constructor que carga la imagen desde un InputStream (recomendado para recursos internos).
      */
-    private Image cargarImagen(String ruta) {
+    public Imagen(InputStream inputStream, int tamanio) {
+        this.tamanio = tamanio;
+        this.imagenOriginal = cargarImagenDesdeStream(inputStream);
+        if (this.imagenOriginal != null) {
+            this.fragmentos = dividirEnFragmentos(imagenOriginal, tamanio);
+        } else {
+            System.err.println("No se pudo cargar la imagen desde InputStream. fragmentos será null.");
+            this.fragmentos = null;
+        }
+    }
+
+    /**
+     * Carga y escala una imagen desde una ruta de archivo.
+     */
+    private Image cargarImagenDesdeRuta(String ruta) {
         try {
             File archivo = new File(ruta);
             if (!archivo.exists()) {
@@ -41,16 +54,33 @@ public class Imagen {
                 return null;
             }
             BufferedImage imagen = ImageIO.read(archivo);
-            if (imagen == null) {
-                System.err.println("No se pudo leer el archivo como imagen: " + ruta);
-                return null;
-            }
-            final int TAMANO_IMAGEN = 600;
-            return imagen.getScaledInstance(TAMANO_IMAGEN, TAMANO_IMAGEN, Image.SCALE_SMOOTH);
+            return escalarImagen(imagen);
         } catch (IOException e) {
-            System.err.println("Error al cargar la imagen: " + e.getMessage());
+            System.err.println("Error al cargar la imagen desde archivo: " + e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Carga y escala una imagen desde un InputStream.
+     */
+    private Image cargarImagenDesdeStream(InputStream stream) {
+        try {
+            BufferedImage imagen = ImageIO.read(stream);
+            return escalarImagen(imagen);
+        } catch (IOException e) {
+            System.err.println("Error al cargar la imagen desde InputStream: " + e.getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Escala la imagen a un tamaño fijo.
+     */
+    private Image escalarImagen(BufferedImage imagen) {
+        if (imagen == null) return null;
+        final int TAMANO_IMAGEN = 600;
+        return imagen.getScaledInstance(TAMANO_IMAGEN, TAMANO_IMAGEN, Image.SCALE_SMOOTH);
     }
 
     /**
@@ -59,7 +89,7 @@ public class Imagen {
     private Image[][] dividirEnFragmentos(Image img, int tamanio) {
         Image[][] fragmentos = new Image[tamanio][tamanio];
 
-        // Asegurar que la imagen sea un BufferedImage
+        // Convertir a BufferedImage si es necesario
         if (!(img instanceof BufferedImage)) {
             BufferedImage temp = new BufferedImage(
                 img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
@@ -73,9 +103,8 @@ public class Imagen {
 
         for (int i = 0; i < tamanio; i++) {
             for (int j = 0; j < tamanio; j++) {
-                // Deja la última casilla vacía para representar el espacio libre del puzzle
                 if (i == tamanio - 1 && j == tamanio - 1) {
-                    fragmentos[i][j] = null;
+                    fragmentos[i][j] = null; // última casilla vacía
                 } else {
                     fragmentos[i][j] = imagenBuffered.getSubimage(j * ancho, i * alto, ancho, alto);
                 }

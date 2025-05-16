@@ -3,31 +3,38 @@ package paqueteprincipal;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.InputStream;
 import javax.swing.border.Border;
 
 public class JuegoRompecabezas extends JFrame {
 
-    private Puzzle juego;                
-    private JPanel panelTablero;         
-    private JLabel[][] etiquetasCasillas; 
-    private Imagen imagen;             
-    private int filas, columnas;       
+    private Puzzle juego;
+    private JPanel panelTablero;
+    private JLabel[][] etiquetasCasillas;
+    private Imagen imagen;
+    private int filas, columnas;
 
-    private Timer timer;               
-    private int elapsedTime = 0;       
-    private JLabel timerLabel;   
+    private Timer timer;
+    private int elapsedTime = 0;
+    private JLabel timerLabel;
     private int turnos = 0;
 
-
     /**
-     * Constructor principal que configura el juego con las filas y columnas dadas.
+     * Constructor principal que configura el juego con las filas y columnas
+     * dadas.
      */
     public JuegoRompecabezas(int filas, int columnas, boolean iniciar) {
         this.filas = filas;
         this.columnas = columnas;
 
         // Carga la imagen y la divide según filas/columnas
-        imagen = new Imagen(getClass().getResource("/recursos/imagen.png").getPath(), filas);
+        InputStream is = getClass().getResourceAsStream("/recursos/imagen.png");
+        if (is == null) {
+            JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            imagen = new Imagen(is, filas); // Usa un constructor que acepte InputStream
+        }
+
         juego = new Puzzle(imagen);
 
         ReproductorSonido.cargarSonidos(); // Prepara sonidos del juego
@@ -95,8 +102,8 @@ public class JuegoRompecabezas extends JFrame {
     }
 
     /**
-     * Crea y agrega las etiquetas que representan las casillas del puzzle
-     * con sus respectivos eventos para mover piezas al hacer click.
+     * Crea y agrega las etiquetas que representan las casillas del puzzle con
+     * sus respectivos eventos para mover piezas al hacer click.
      */
     private void agregarEtiquetasTablero() {
         for (int i = 0; i < filas; i++) {
@@ -141,7 +148,8 @@ public class JuegoRompecabezas extends JFrame {
     }
 
     /**
-     * Inicia el juego: desordena las piezas, actualiza el tablero y comienza el temporizador.
+     * Inicia el juego: desordena las piezas, actualiza el tablero y comienza el
+     * temporizador.
      */
     private void iniciarJuego() {
         juego.desordenar();
@@ -160,8 +168,9 @@ public class JuegoRompecabezas extends JFrame {
     }
 
     /**
-     * Intenta mover la casilla en la posición dada hacia el espacio vacío si es válido.
-     * Reproduce sonidos, actualiza el tablero y verifica si el juego se ha completado.
+     * Intenta mover la casilla en la posición dada hacia el espacio vacío si es
+     * válido. Reproduce sonidos, actualiza el tablero y verifica si el juego se
+     * ha completado.
      */
     private void moverCasilla(int fila, int columna) {
         char direccion = ' ';
@@ -204,8 +213,8 @@ public class JuegoRompecabezas extends JFrame {
     }
 
     /**
-     * Actualiza las etiquetas del tablero mostrando los fragmentos de imagen
-     * o el espacio vacío, según el estado actual del juego.
+     * Actualiza las etiquetas del tablero mostrando los fragmentos de imagen o
+     * el espacio vacío, según el estado actual del juego.
      */
     private void actualizarTablero() {
         for (int i = 0; i < filas; i++) {
@@ -241,8 +250,8 @@ public class JuegoRompecabezas extends JFrame {
     }
 
     /**
-     * Agrega un listener para detectar las teclas WASD y mover las piezas
-     * del puzzle en las direcciones correspondientes.
+     * Agrega un listener para detectar las teclas WASD y mover las piezas del
+     * puzzle en las direcciones correspondientes.
      */
     private void agregarTeclado() {
         this.addKeyListener(new KeyAdapter() {
@@ -252,10 +261,18 @@ public class JuegoRompecabezas extends JFrame {
                 ReproductorSonido.reproducirMovimiento();
 
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_W: direccion = 'w'; break;
-                    case KeyEvent.VK_S: direccion = 's'; break;
-                    case KeyEvent.VK_A: direccion = 'a'; break;
-                    case KeyEvent.VK_D: direccion = 'd'; break;
+                    case KeyEvent.VK_W:
+                        direccion = 'w';
+                        break;
+                    case KeyEvent.VK_S:
+                        direccion = 's';
+                        break;
+                    case KeyEvent.VK_A:
+                        direccion = 'a';
+                        break;
+                    case KeyEvent.VK_D:
+                        direccion = 'd';
+                        break;
                 }
 
                 if (direccion != ' ' && juego.mover(direccion)) {
@@ -291,7 +308,8 @@ public class JuegoRompecabezas extends JFrame {
     }
 
     /**
-     * Inicia el temporizador que cuenta el tiempo en segundos y actualiza la etiqueta visual.
+     * Inicia el temporizador que cuenta el tiempo en segundos y actualiza la
+     * etiqueta visual.
      */
     private void startTimer() {
         if (timer != null) {
