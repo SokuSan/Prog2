@@ -1,39 +1,46 @@
 package paqueteprincipal;
 
-import java.time.LocalDate;
-
 public class RecordTiempo implements Comparable<RecordTiempo> {
     private String nombre;
     private int segundos;
-    private LocalDate fecha;
+    
 
-    public RecordTiempo(String nombre, int segundos, LocalDate fecha) {
+    /**
+     * Constructor que inicializa un nuevo récord de tiempo.
+     */
+    public RecordTiempo(String nombre, int segundos) {
         this.nombre = nombre;
         this.segundos = segundos;
-        this.fecha = fecha;
     }
 
+    /**
+     * Devuelve el nombre del jugador que consiguió el récord.
+     */
     public String getNombre() {
         return nombre;
     }
 
+    /**
+     * Devuelve el tiempo registrado en segundos.
+     */
     public int getSegundos() {
         return segundos;
     }
 
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
+    /**
+     * Compara este objeto RecordTiempo con otro RecordTiempo para ordenarlos de menor a mayor tiempo.
+     */
     @Override
     public int compareTo(RecordTiempo otro) {
         return Integer.compare(this.segundos, otro.segundos);
     }
 
+    /**
+     * Devuelve una representación en texto del récord,
+     * con el tiempo formateado en minutos y segundos.
+     */
     @Override
     public String toString() {
-        int minutos = segundos / 60;
-        int seg = segundos % 60;
-        return String.format("%s - %02d:%02d - %s", nombre, minutos, seg, fecha);
+        return nombre + ";" + segundos;
     }
 }

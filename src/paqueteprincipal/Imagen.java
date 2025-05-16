@@ -12,15 +12,12 @@ import java.io.IOException;
  */
 public class Imagen {
     
-    private Image imagenOriginal; // Imagen escalada base
-    private Image[][] fragmentos; // Fragmentos de la imagen
-    private int tamanio; // Tamaño del puzzle (NxN)
+    private Image imagenOriginal; 
+    private Image[][] fragmentos; 
+    private int tamanio; 
 
     /**
      * Carga una imagen desde el archivo y la divide en fragmentos.
-     *
-     * @param rutaArchivo Ruta del archivo de imagen.
-     * @param tamanio     Tamaño del puzzle (número de filas/columnas).
      */
     public Imagen(String rutaArchivo, int tamanio) {
         this.tamanio = tamanio;
@@ -35,9 +32,6 @@ public class Imagen {
 
     /**
      * Carga y escala una imagen desde la ruta indicada.
-     *
-     * @param ruta Ruta del archivo de imagen.
-     * @return Imagen escalada o null si no se pudo cargar.
      */
     private Image cargarImagen(String ruta) {
         try {
@@ -61,10 +55,6 @@ public class Imagen {
 
     /**
      * Divide la imagen en fragmentos cuadráticos de igual tamaño.
-     *
-     * @param img     Imagen original.
-     * @param tamanio Número de fragmentos por fila y columna.
-     * @return Matriz de imágenes con los fragmentos.
      */
     private Image[][] dividirEnFragmentos(Image img, int tamanio) {
         Image[][] fragmentos = new Image[tamanio][tamanio];
@@ -97,10 +87,6 @@ public class Imagen {
 
     /**
      * Devuelve un fragmento de imagen en una posición específica.
-     *
-     * @param fila    Fila del fragmento.
-     * @param columna Columna del fragmento.
-     * @return Fragmento de imagen, o null si no está cargado.
      */
     public Image getFragmento(int fila, int columna) {
         return fragmentos != null ? fragmentos[fila][columna] : null;
@@ -108,8 +94,6 @@ public class Imagen {
 
     /**
      * Devuelve el tamaño del puzzle (N).
-     *
-     * @return Número de filas o columnas de fragmentos.
      */
     public int getTamanio() {
         return tamanio;
