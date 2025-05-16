@@ -14,23 +14,9 @@ public class Imagen {
     private Image imagenOriginal;
     private Image[][] fragmentos;
     private int tamanio;
-
+    
     /**
-     * Constructor que carga la imagen desde una ruta de archivo.
-     */
-    public Imagen(String rutaArchivo, int tamanio) {
-        this.tamanio = tamanio;
-        this.imagenOriginal = cargarImagenDesdeRuta(rutaArchivo);
-        if (this.imagenOriginal != null) {
-            this.fragmentos = dividirEnFragmentos(imagenOriginal, tamanio);
-        } else {
-            System.err.println("No se pudo cargar la imagen desde ruta. fragmentos será null.");
-            this.fragmentos = null;
-        }
-    }
-
-    /**
-     * Constructor que carga la imagen desde un InputStream (recomendado para recursos internos).
+     * Constructor que carga la imagen desde un InputStream.
      */
     public Imagen(InputStream inputStream, int tamanio) {
         this.tamanio = tamanio;
@@ -40,24 +26,6 @@ public class Imagen {
         } else {
             System.err.println("No se pudo cargar la imagen desde InputStream. fragmentos será null.");
             this.fragmentos = null;
-        }
-    }
-
-    /**
-     * Carga y escala una imagen desde una ruta de archivo.
-     */
-    private Image cargarImagenDesdeRuta(String ruta) {
-        try {
-            File archivo = new File(ruta);
-            if (!archivo.exists()) {
-                System.err.println("No se encontró el archivo: " + ruta);
-                return null;
-            }
-            BufferedImage imagen = ImageIO.read(archivo);
-            return escalarImagen(imagen);
-        } catch (IOException e) {
-            System.err.println("Error al cargar la imagen desde archivo: " + e.getMessage());
-            return null;
         }
     }
 
