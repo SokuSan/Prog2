@@ -12,6 +12,8 @@ public class GestorRanking {
 
     /**
      * Agrega un nuevo tiempo al ranking, lo ordena y guarda.
+     *
+     * @param nuevo
      */
     public static void agregarNuevoTiempo(RecordTiempo nuevo) {
         List<RecordTiempo> ranking = leerRanking();
@@ -28,6 +30,8 @@ public class GestorRanking {
 
     /**
      * Muestra el ranking actual en un cuadro de diálogo.
+     *
+     * @param parent
      */
     public static void mostrarRanking(Component parent) {
         List<RecordTiempo> ranking = leerRanking();
@@ -42,6 +46,8 @@ public class GestorRanking {
     /**
      * Lee el ranking desde el archivo y lo devuelve como una lista de
      * RecordTiempo.
+     *
+     * @return
      */
     private static List<RecordTiempo> leerRanking() {
         List<RecordTiempo> lista = new ArrayList<>();
@@ -69,6 +75,8 @@ public class GestorRanking {
 
     /**
      * Guarda la lista de registros en el archivo de ranking.
+     *
+     * @param lista
      */
     private static void guardarRanking(List<RecordTiempo> lista) {
         try {

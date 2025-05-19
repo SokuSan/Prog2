@@ -4,11 +4,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class RecordTiempo {
+
     private final String nombre;
     private final int segundos;
 
     /**
      * Constructor que inicializa un nuevo récord de tiempo.
+     *
+     * @param nombre
+     * @param segundos
      */
     public RecordTiempo(String nombre, int segundos) {
         this.nombre = nombre;
@@ -17,6 +21,8 @@ public class RecordTiempo {
 
     /**
      * Devuelve el nombre del jugador que consiguió el récord.
+     *
+     * @return
      */
     public String getNombre() {
         return nombre;
@@ -24,6 +30,8 @@ public class RecordTiempo {
 
     /**
      * Devuelve el tiempo registrado en segundos.
+     *
+     * @return
      */
     public int getSegundos() {
         return segundos;
@@ -31,6 +39,8 @@ public class RecordTiempo {
 
     /**
      * Devuelve una representación en texto del récord.
+     *
+     * @return
      */
     @Override
     public String toString() {
@@ -39,9 +49,10 @@ public class RecordTiempo {
 
     /**
      * Método que organiza una lista de RecordTiempo de menor a mayor tiempo.
+     *
+     * @param lista
      */
     public static void ordenarRanking(List<RecordTiempo> lista) {
-        // Implementación de ordenamiento burbuja (Bubble Sort) como ejemplo
         int n = lista.size();
         for (int i = 0; i < n - 1; i++) {
             for (int j = 0; j < n - i - 1; j++) {

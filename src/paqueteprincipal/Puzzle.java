@@ -3,20 +3,22 @@ package paqueteprincipal;
 import java.util.*;
 
 /**
- * Clase que representa el modelo lógico del rompecabezas.
- * Gestiona la matriz de casillas, el estado actual del puzzle,
- * el número de turnos y las operaciones de inicialización, mezcla y movimiento.
+ * Clase que representa el modelo lógico del rompecabezas. Gestiona la matriz de
+ * casillas, el estado actual del puzzle, el número de turnos y las operaciones
+ * de inicialización, mezcla y movimiento.
  */
 public class Puzzle {
 
-    private Casilla[][] casillas;     
-    private int filaVacia, columnaVacia; 
-    private int turnos;              
-    private Imagen imagen;        
-    private int tamanio;            
+    private Casilla[][] casillas;
+    private int filaVacia, columnaVacia;
+    private int turnos;
+    private Imagen imagen;
+    private int tamanio;
 
     /**
      * Constructor del puzzle. Recibe una imagen y establece el tamaño.
+     *
+     * @param imagen
      */
     public Puzzle(Imagen imagen) {
         this.imagen = imagen;
@@ -89,17 +91,29 @@ public class Puzzle {
 
     /**
      * Mueve una casilla en la dirección indicada (si es posible).
+     *
+     * @param direccion
+     * @return
      */
     public boolean mover(char direccion) {
         int dx = 0, dy = 0;
 
         // Traduce la dirección a desplazamiento
         switch (direccion) {
-            case 's': dx = -1; break; // Abajo
-            case 'w': dx = 1; break;  // Arriba
-            case 'd': dy = -1; break; // Derecha
-            case 'a': dy = 1; break;  // Izquierda
-            default: return false;   // Dirección no válida
+            case 's':
+                dx = -1;
+                break; // Abajo
+            case 'w':
+                dx = 1;
+                break;  // Arriba
+            case 'd':
+                dy = -1;
+                break; // Derecha
+            case 'a':
+                dy = 1;
+                break;  // Izquierda
+            default:
+                return false;   // Dirección no válida
         }
 
         int nuevaFila = filaVacia + dx;
@@ -121,6 +135,11 @@ public class Puzzle {
 
     /**
      * Intercambia dos casillas en la matriz.
+     *
+     * @param fila1
+     * @param col1
+     * @param fila2
+     * @param col2
      */
     private void intercambiarCasillas(int fila1, int col1, int fila2, int col2) {
         Casilla temp = casillas[fila1][col1];
@@ -130,6 +149,8 @@ public class Puzzle {
 
     /**
      * Verifica si el puzzle está resuelto (orden correcto).
+     *
+     * @return
      */
     public boolean estaResuelto() {
         int valorEsperado = 1;
@@ -143,7 +164,9 @@ public class Puzzle {
                     return valor == 0;
                 }
 
-                if (valor != valorEsperado) return false;
+                if (valor != valorEsperado) {
+                    return false;
+                }
 
                 valorEsperado++;
             }
@@ -154,13 +177,16 @@ public class Puzzle {
 
     /**
      * Devuelve la casilla en una posición específica.
+     *
+     * @param fila
+     * @param columna
+     * @return
      */
     public Casilla getCasilla(int fila, int columna) {
         return casillas[fila][columna];
     }
 
     // Getters
-
     public int getFilaVacia() {
         return filaVacia;
     }

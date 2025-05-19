@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Clase que representa un cuadro de diálogo para pedir al usuario
- * la medida del rompecabezas en formato NxN.
+ * Clase que representa un cuadro de diálogo para pedir al usuario la medida del
+ * rompecabezas en formato NxN.
  */
 public class PuzzleDialog extends JDialog {
 
@@ -15,6 +15,9 @@ public class PuzzleDialog extends JDialog {
 
     /**
      * Constructor del dialog que solicita al usuario una medida válida.
+     *
+     * @param parent
+     * @param callback
      */
     public PuzzleDialog(JFrame parent, PuzzleDialogCallback callback) {
         super(parent, "Inicializar Rompecabezas", true);
@@ -61,6 +64,9 @@ public class PuzzleDialog extends JDialog {
 
     /**
      * Método para mostrar el dialog desde fuera.
+     *
+     * @param parent
+     * @param callback
      */
     public static void mostrar(JFrame parent, PuzzleDialogCallback callback) {
         new PuzzleDialog(parent, callback);

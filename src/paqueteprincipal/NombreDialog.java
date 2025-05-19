@@ -10,6 +10,8 @@ public class NombreDialog extends JDialog {
 
     /**
      * Constructor que crea y muestra el cuadro de dialog.
+     *
+     * @param parent
      */
     public NombreDialog(Frame parent) {
         super(parent, "Introduce tus iniciales", true);
@@ -26,7 +28,9 @@ public class NombreDialog extends JDialog {
             @Override
             public void insertString(int offs, String str, javax.swing.text.AttributeSet a)
                     throws javax.swing.text.BadLocationException {
-                if (str == null) return;
+                if (str == null) {
+                    return;
+                }
                 if ((getLength() + str.length()) <= 3 && str.matches("[a-zA-Z]+")) {
                     super.insertString(offs, str.toUpperCase(), a);
                 }
@@ -56,6 +60,8 @@ public class NombreDialog extends JDialog {
 
     /**
      * Devuelve el nombre (iniciales) ingresado por el usuario.
+     *
+     * @return
      */
     public String getNombreIngresado() {
         return nombreIngresado;

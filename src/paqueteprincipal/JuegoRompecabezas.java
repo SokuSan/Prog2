@@ -7,7 +7,7 @@ import java.io.InputStream;
 import javax.swing.border.Border;
 
 public class JuegoRompecabezas extends JFrame {
-    
+
     private boolean juegoTerminado = false;
 
     private Puzzle juego;
@@ -21,6 +21,14 @@ public class JuegoRompecabezas extends JFrame {
     private JLabel timerLabel;
     private int turnos = 0;
 
+    /**
+     * Constructor principal que configura el juego con las filas y columnas
+     * dadas
+     *
+     * @param filas
+     * @param columnas
+     * @param iniciar
+     */
     public JuegoRompecabezas(int filas, int columnas, boolean iniciar) {
         this.filas = filas;
         this.columnas = columnas;
@@ -84,10 +92,20 @@ public class JuegoRompecabezas extends JFrame {
         }
     }
 
+    /**
+     * Constructor secundario que no inicia el juego automáticamente
+     *
+     * @param filas
+     * @param columnas
+     */
     public JuegoRompecabezas(int filas, int columnas) {
         this(filas, columnas, false);
     }
 
+    /**
+     * Crea y agrega las etiquetas que representan las casillas del puzzle con
+     * sus respectivos eventos para mover piezas al hacer click
+     */
     private void agregarEtiquetasTablero() {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -127,12 +145,19 @@ public class JuegoRompecabezas extends JFrame {
         }
     }
 
+    /**
+     * Inicia el juego: desordena las piezas, actualiza el tablero y comienza el
+     * temporizador
+     */
     private void iniciarJuego() {
         juego.desordenar();
         actualizarTablero();
         empezarTiempo();
     }
 
+    /**
+     * Resuelve el juego mostrando el puzzle ordenado y detiene el temporizador
+     */
     private void resolverJuego() {
         juego.inicializar();
         actualizarTablero();
@@ -140,8 +165,18 @@ public class JuegoRompecabezas extends JFrame {
         pararTiempo();
     }
 
+    /**
+     * Intenta mover la casilla en la posición dada hacia el espacio vacío si es
+     * válido. Reproduce sonidos, actualiza el tablero y verifica si el juego se
+     * ha completado
+     *
+     * @param fila
+     * @param columna
+     */
     private void moverCasilla(int fila, int columna) {
-        if (juegoTerminado) return;
+        if (juegoTerminado) {
+            return;
+        }
         char direccion = ' ';
         ReproductorSonido.reproducirMovimiento();
 
@@ -178,6 +213,10 @@ public class JuegoRompecabezas extends JFrame {
         turnos++;
     }
 
+    /**
+     * Actualiza las etiquetas del tablero mostrando los fragmentos de imagen o
+     * el espacio vacío, según el estado actual del juego
+     */
     private void actualizarTablero() {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -209,11 +248,17 @@ public class JuegoRompecabezas extends JFrame {
         }
     }
 
+    /**
+     * Agrega un listener para detectar las teclas WASD y mover las piezas del
+     * puzzle en las direcciones correspondientes
+     */
     private void agregarTeclado() {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (juegoTerminado) return;
+                if (juegoTerminado) {
+                    return;
+                }
                 char direccion = ' ';
                 ReproductorSonido.reproducirMovimiento();
 
@@ -257,10 +302,19 @@ public class JuegoRompecabezas extends JFrame {
         this.setFocusable(true);
     }
 
+    /**
+     * Método main que inicia el juego con un tablero 3x3 por defecto
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));
     }
 
+    /**
+     * Inicia el temporizador que cuenta el tiempo en segundos y actualiza la
+     * etiqueta visual
+     */
     private void empezarTiempo() {
         if (timer != null) {
             timer.stop();
@@ -277,6 +331,9 @@ public class JuegoRompecabezas extends JFrame {
         timer.start();
     }
 
+    /**
+     * Detiene el temporizador si está activo
+     */
     private void pararTiempo() {
         if (timer != null) {
             juegoTerminado = true;
@@ -284,6 +341,9 @@ public class JuegoRompecabezas extends JFrame {
         }
     }
 
+    /**
+     * Actualiza la etiqueta que muestra el tiempo en formato MM:SS
+     */
     private void actualizarLabelTiempo() {
         int minutos = elapsedTime / 60;
         int segundos = elapsedTime % 60;

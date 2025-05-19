@@ -15,6 +15,11 @@ public class Casilla {
 
     /**
      * Constructor de la clase Casilla.
+     *
+     * @param valor
+     * @param fila
+     * @param columna
+     * @param fragmento
      */
     public Casilla(int valor, int fila, int columna, Image fragmento) {
         this.valor = valor;
@@ -50,6 +55,9 @@ public class Casilla {
 
     /**
      * Establece la nueva posición de la casilla en la cuadrícula.
+     *
+     * @param fila
+     * @param columna
      */
     public void setPosicion(int fila, int columna) {
         this.fila = fila;

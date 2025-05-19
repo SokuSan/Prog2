@@ -6,17 +6,20 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 /**
- * Clase que representa una imagen dividida en fragmentos cuadrados.
- * Utilizada para construir un puzzle de tamaño NxN.
+ * Clase que representa una imagen dividida en fragmentos cuadrados. Utilizada
+ * para construir un puzzle de tamaño NxN.
  */
 public class Imagen {
 
     private final Image imagenOriginal;
     private final Image[][] fragmentos;
     private final int tamanio;
-    
+
     /**
      * Constructor que carga la imagen desde un InputStream.
+     *
+     * @param inputStream
+     * @param tamanio
      */
     public Imagen(InputStream inputStream, int tamanio) {
         this.tamanio = tamanio;
@@ -31,6 +34,9 @@ public class Imagen {
 
     /**
      * Carga y escala una imagen desde un InputStream.
+     *
+     * @param stream
+     * @return
      */
     private Image cargarImagenDesdeStream(InputStream stream) {
         try {
@@ -44,15 +50,24 @@ public class Imagen {
 
     /**
      * Escala la imagen a un tamaño fijo.
+     *
+     * @param imagen
+     * @return
      */
     private Image escalarImagen(BufferedImage imagen) {
-        if (imagen == null) return null;
+        if (imagen == null) {
+            return null;
+        }
         final int TAMANO_IMAGEN = 600;
         return imagen.getScaledInstance(TAMANO_IMAGEN, TAMANO_IMAGEN, Image.SCALE_SMOOTH);
     }
 
     /**
      * Divide la imagen en fragmentos cuadráticos de igual tamaño.
+     *
+     * @param img
+     * @param tamanio
+     * @return
      */
     private Image[][] dividirEnFragmentos(Image img, int tamanio) {
         Image[][] fragmentos = new Image[tamanio][tamanio];
@@ -60,7 +75,7 @@ public class Imagen {
         // Convertir a BufferedImage si es necesario
         if (!(img instanceof BufferedImage)) {
             BufferedImage temp = new BufferedImage(
-                img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+                    img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
             temp.getGraphics().drawImage(img, 0, 0, null);
             img = temp;
         }
@@ -84,6 +99,10 @@ public class Imagen {
 
     /**
      * Devuelve un fragmento de imagen en una posición específica.
+     *
+     * @param fila
+     * @param columna
+     * @return
      */
     public Image getFragmento(int fila, int columna) {
         return fragmentos != null ? fragmentos[fila][columna] : null;
