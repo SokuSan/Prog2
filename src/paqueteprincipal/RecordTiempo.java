@@ -1,9 +1,11 @@
 package paqueteprincipal;
 
-public class RecordTiempo implements Comparable<RecordTiempo> {
-    private String nombre;
-    private int segundos;
-    
+import java.util.Collections;
+import java.util.List;
+
+public class RecordTiempo {
+    private final String nombre;
+    private final int segundos;
 
     /**
      * Constructor que inicializa un nuevo récord de tiempo.
@@ -28,19 +30,25 @@ public class RecordTiempo implements Comparable<RecordTiempo> {
     }
 
     /**
-     * Compara este objeto RecordTiempo con otro RecordTiempo para ordenarlos de menor a mayor tiempo.
-     */
-    @Override
-    public int compareTo(RecordTiempo otro) {
-        return Integer.compare(this.segundos, otro.segundos);
-    }
-
-    /**
-     * Devuelve una representación en texto del récord,
-     * con el tiempo formateado en minutos y segundos.
+     * Devuelve una representación en texto del récord.
      */
     @Override
     public String toString() {
         return nombre + ";" + segundos;
+    }
+
+    /**
+     * Método que organiza una lista de RecordTiempo de menor a mayor tiempo.
+     */
+    public static void ordenarRanking(List<RecordTiempo> lista) {
+        // Implementación de ordenamiento burbuja (Bubble Sort) como ejemplo
+        int n = lista.size();
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < n - i - 1; j++) {
+                if (lista.get(j).segundos > lista.get(j + 1).segundos) {
+                    Collections.swap(lista, j, j + 1);
+                }
+            }
+        }
     }
 }

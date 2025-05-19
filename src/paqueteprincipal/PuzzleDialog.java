@@ -9,9 +9,9 @@ import java.awt.*;
  */
 public class PuzzleDialog extends JDialog {
 
-    private JLabel mensajeLabel;
+    private final JLabel mensajeLabel;
     private JTextField inputField;
-    private JButton aceptarButton;
+    private final JButton aceptarButton;
 
     /**
      * Constructor del dialog que solicita al usuario una medida válida.

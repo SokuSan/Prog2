@@ -6,7 +6,7 @@ import java.io.*;
 import java.util.*;
 
 public class GestorRanking {
-    
+
     private static final String ARCHIVO = "src/recursos/ranking.txt"; // archivo donde se guarda el ranking
     private static final int MAX_RECORDS = 10; // Número máximo de registros en el ranking
 
@@ -16,11 +16,13 @@ public class GestorRanking {
     public static void agregarNuevoTiempo(RecordTiempo nuevo) {
         List<RecordTiempo> ranking = leerRanking();
         ranking.add(nuevo);
-        Collections.sort(ranking);
-        
+
+        RecordTiempo.ordenarRanking(ranking);
+
         if (ranking.size() > MAX_RECORDS) {
-            ranking = ranking.subList(0, MAX_RECORDS);
+            ranking = new ArrayList<>(ranking.subList(0, MAX_RECORDS));
         }
+
         guardarRanking(ranking);
     }
 
@@ -38,7 +40,8 @@ public class GestorRanking {
     }
 
     /**
-     * Lee el ranking desde el archivo y lo devuelve como una lista de RecordTiempo.
+     * Lee el ranking desde el archivo y lo devuelve como una lista de
+     * RecordTiempo.
      */
     private static List<RecordTiempo> leerRanking() {
         List<RecordTiempo> lista = new ArrayList<>();
@@ -83,7 +86,7 @@ public class GestorRanking {
                     pw.println(record.getNombre() + ";" + record.getSegundos());
                 }
             }
-           
+
         } catch (IOException e) {
             e.printStackTrace();
         }

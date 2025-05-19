@@ -11,9 +11,9 @@ import javax.imageio.ImageIO;
  */
 public class Imagen {
 
-    private Image imagenOriginal;
-    private Image[][] fragmentos;
-    private int tamanio;
+    private final Image imagenOriginal;
+    private final Image[][] fragmentos;
+    private final int tamanio;
     
     /**
      * Constructor que carga la imagen desde un InputStream.
