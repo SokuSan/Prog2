@@ -130,14 +130,14 @@ public class JuegoRompecabezas extends JFrame {
     private void iniciarJuego() {
         juego.desordenar();
         actualizarTablero();
-        startTimer();
+        empezarTiempo();
     }
 
     private void resolverJuego() {
         juego.inicializar();
         actualizarTablero();
-        startTimer();
-        stopTimer();
+        empezarTiempo();
+        pararTiempo();
     }
 
     private void moverCasilla(int fila, int columna) {
@@ -159,7 +159,7 @@ public class JuegoRompecabezas extends JFrame {
             actualizarTablero();
 
             if (juego.estaResuelto()) {
-                stopTimer();
+                pararTiempo();
                 ReproductorSonido.reproducirCompletado();
 
                 NombreDialog dialogo = new NombreDialog(JuegoRompecabezas.this);
@@ -236,7 +236,7 @@ public class JuegoRompecabezas extends JFrame {
                     actualizarTablero();
 
                     if (juego.estaResuelto()) {
-                        stopTimer();
+                        pararTiempo();
                         ReproductorSonido.reproducirCompletado();
 
                         NombreDialog dialogo = new NombreDialog(JuegoRompecabezas.this);
@@ -261,30 +261,30 @@ public class JuegoRompecabezas extends JFrame {
         SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));
     }
 
-    private void startTimer() {
+    private void empezarTiempo() {
         if (timer != null) {
             timer.stop();
         }
         juegoTerminado = false;
         elapsedTime = 0;
-        updateTimerLabel();
+        actualizarLabelTiempo();
 
         timer = new Timer(1000, e -> {
             elapsedTime++;
-            updateTimerLabel();
+            actualizarLabelTiempo();
         });
 
         timer.start();
     }
 
-    private void stopTimer() {
+    private void pararTiempo() {
         if (timer != null) {
             juegoTerminado = true;
             timer.stop();
         }
     }
 
-    private void updateTimerLabel() {
+    private void actualizarLabelTiempo() {
         int minutos = elapsedTime / 60;
         int segundos = elapsedTime % 60;
         String tiempoFormateado = String.format("Tiempo: %02d:%02d", minutos, segundos);
