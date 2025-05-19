@@ -7,6 +7,8 @@ import java.io.InputStream;
 import javax.swing.border.Border;
 
 public class JuegoRompecabezas extends JFrame {
+    
+    private boolean juegoTerminado = false;
 
     private Puzzle juego;
     private JPanel panelTablero;
@@ -19,34 +21,28 @@ public class JuegoRompecabezas extends JFrame {
     private JLabel timerLabel;
     private int turnos = 0;
 
-    /**
-     * Constructor principal que configura el juego con las filas y columnas
-     * dadas.
-     */
     public JuegoRompecabezas(int filas, int columnas, boolean iniciar) {
         this.filas = filas;
         this.columnas = columnas;
 
-        // Carga la imagen y la divide según filas/columnas
         InputStream is = getClass().getResourceAsStream("/recursos/imagen.png");
         if (is == null) {
             JOptionPane.showMessageDialog(null, "No se pudo cargar la imagen", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            imagen = new Imagen(is, filas); // Usa un constructor que acepte InputStream
+            imagen = new Imagen(is, filas);
         }
 
         juego = new Puzzle(imagen);
 
-        ReproductorSonido.cargarSonidos(); // Prepara sonidos del juego
+        ReproductorSonido.cargarSonidos();
 
         setTitle("Juego de Rompecabezas");
         setSize(600, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        agregarTeclado(); // Agrega manejo de teclado para mover piezas
+        agregarTeclado();
 
-        // Configura el menú superior con opciones de iniciar, resolver, ver estadísticas y salir
         JMenuBar menuBar = new JMenuBar();
         JMenuItem resolverItem = new JMenuItem("Resolver");
         JMenuItem iniciarItem = new JMenuItem("Inicializar");
@@ -59,7 +55,6 @@ public class JuegoRompecabezas extends JFrame {
         menuBar.add(salirItem);
         setJMenuBar(menuBar);
 
-        // Acción para reiniciar el juego con nuevo tamaño seleccionado
         iniciarItem.addActionListener(e -> {
             PuzzleDialog.mostrar(this, medida -> {
                 dispose();
@@ -68,20 +63,15 @@ public class JuegoRompecabezas extends JFrame {
         });
 
         resolverItem.addActionListener(e -> resolverJuego());
-
         estadisticasItem.addActionListener(e -> GestorRanking.mostrarRanking(JuegoRompecabezas.this));
-
         salirItem.addActionListener(e -> System.exit(0));
 
-        // Configura el panel del tablero con un GridLayout
         panelTablero = new JPanel();
         panelTablero.setLayout(new GridLayout(filas, columnas));
         etiquetasCasillas = new JLabel[filas][columnas];
-        agregarEtiquetasTablero(); // Añade las etiquetas visuales al tablero
-
+        agregarEtiquetasTablero();
         add(panelTablero, BorderLayout.CENTER);
 
-        // Etiqueta para mostrar el tiempo transcurrido en la parte superior
         timerLabel = new JLabel("Tiempo: 00:00");
         timerLabel.setFont(new Font("Arial", Font.BOLD, 18));
         timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -90,21 +80,14 @@ public class JuegoRompecabezas extends JFrame {
         setVisible(true);
 
         if (iniciar) {
-            iniciarJuego(); // Desordena y comienza el temporizador
+            iniciarJuego();
         }
     }
 
-    /**
-     * Constructor secundario que no inicia el juego automáticamente.
-     */
     public JuegoRompecabezas(int filas, int columnas) {
         this(filas, columnas, false);
     }
 
-    /**
-     * Crea y agrega las etiquetas que representan las casillas del puzzle con
-     * sus respectivos eventos para mover piezas al hacer click.
-     */
     private void agregarEtiquetasTablero() {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -121,20 +104,17 @@ public class JuegoRompecabezas extends JFrame {
                 final int fila = i;
                 final int columna = j;
 
-                // Evento click para mover la casilla si está al lado del espacio vacío
                 etiqueta.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         moverCasilla(fila, columna);
                     }
 
-                    // Cambia el borde al pasar el mouse para efecto visual
                     @Override
                     public void mouseEntered(MouseEvent e) {
                         etiqueta.setBorder(BorderFactory.createLineBorder(Color.BLACK, 3));
                     }
 
-                    // Restaura el borde original cuando el mouse sale
                     @Override
                     public void mouseExited(MouseEvent e) {
                         etiqueta.setBorder(bordeOriginal);
@@ -147,19 +127,12 @@ public class JuegoRompecabezas extends JFrame {
         }
     }
 
-    /**
-     * Inicia el juego: desordena las piezas, actualiza el tablero y comienza el
-     * temporizador.
-     */
     private void iniciarJuego() {
         juego.desordenar();
         actualizarTablero();
         startTimer();
     }
 
-    /**
-     * Resuelve el juego mostrando el puzzle ordenado y detiene el temporizador.
-     */
     private void resolverJuego() {
         juego.inicializar();
         actualizarTablero();
@@ -167,16 +140,11 @@ public class JuegoRompecabezas extends JFrame {
         stopTimer();
     }
 
-    /**
-     * Intenta mover la casilla en la posición dada hacia el espacio vacío si es
-     * válido. Reproduce sonidos, actualiza el tablero y verifica si el juego se
-     * ha completado.
-     */
     private void moverCasilla(int fila, int columna) {
+        if (juegoTerminado) return;
         char direccion = ' ';
         ReproductorSonido.reproducirMovimiento();
 
-        // Determina la dirección del movimiento según la posición respecto al espacio vacío
         if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() - 1) {
             direccion = 'd';
         } else if (fila == juego.getFilaVacia() && columna == juego.getColumnaVacia() + 1) {
@@ -187,7 +155,6 @@ public class JuegoRompecabezas extends JFrame {
             direccion = 'w';
         }
 
-        // Si el movimiento es válido, actualiza el tablero y chequea si se resolvió el puzzle
         if (direccion != ' ' && juego.mover(direccion)) {
             actualizarTablero();
 
@@ -195,7 +162,6 @@ public class JuegoRompecabezas extends JFrame {
                 stopTimer();
                 ReproductorSonido.reproducirCompletado();
 
-                // Solicita al usuario ingresar su nombre para el ranking
                 NombreDialog dialogo = new NombreDialog(JuegoRompecabezas.this);
                 dialogo.setVisible(true);
                 String nombre = dialogo.getNombreIngresado();
@@ -212,10 +178,6 @@ public class JuegoRompecabezas extends JFrame {
         turnos++;
     }
 
-    /**
-     * Actualiza las etiquetas del tablero mostrando los fragmentos de imagen o
-     * el espacio vacío, según el estado actual del juego.
-     */
     private void actualizarTablero() {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -223,12 +185,10 @@ public class JuegoRompecabezas extends JFrame {
                 JLabel etiqueta = etiquetasCasillas[i][j];
 
                 if (valor == 0) {
-                    // Casilla vacía: sin icono y con fondo gris claro
                     etiqueta.setIcon(null);
                     etiqueta.setText("");
                     etiqueta.setBackground(Color.LIGHT_GRAY);
                 } else {
-                    // Calcula qué fragmento de imagen mostrar
                     int filaFragmento = (valor - 1) / columnas;
                     int colFragmento = (valor - 1) % columnas;
 
@@ -249,14 +209,11 @@ public class JuegoRompecabezas extends JFrame {
         }
     }
 
-    /**
-     * Agrega un listener para detectar las teclas WASD y mover las piezas del
-     * puzzle en las direcciones correspondientes.
-     */
     private void agregarTeclado() {
         this.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                if (juegoTerminado) return;
                 char direccion = ' ';
                 ReproductorSonido.reproducirMovimiento();
 
@@ -300,26 +257,18 @@ public class JuegoRompecabezas extends JFrame {
         this.setFocusable(true);
     }
 
-    /**
-     * Método main que inicia el juego con un tablero 3x3 por defecto.
-     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));
     }
 
-    /**
-     * Inicia el temporizador que cuenta el tiempo en segundos y actualiza la
-     * etiqueta visual.
-     */
     private void startTimer() {
         if (timer != null) {
             timer.stop();
         }
-
+        juegoTerminado = false;
         elapsedTime = 0;
         updateTimerLabel();
 
-        // Timer que aumenta elapsedTime cada segundo y actualiza la etiqueta
         timer = new Timer(1000, e -> {
             elapsedTime++;
             updateTimerLabel();
@@ -328,22 +277,17 @@ public class JuegoRompecabezas extends JFrame {
         timer.start();
     }
 
-    /**
-     * Detiene el temporizador si está activo.
-     */
     private void stopTimer() {
         if (timer != null) {
+            juegoTerminado = true;
             timer.stop();
         }
     }
 
-    /**
-     * Actualiza la etiqueta que muestra el tiempo en formato MM:SS.
-     */
     private void updateTimerLabel() {
         int minutos = elapsedTime / 60;
         int segundos = elapsedTime % 60;
-        timerLabel.setText(String.format("Tiempo: %02d:%02d", minutos, segundos));
+        String tiempoFormateado = String.format("Tiempo: %02d:%02d", minutos, segundos);
+        timerLabel.setText(tiempoFormateado);
     }
-
 }

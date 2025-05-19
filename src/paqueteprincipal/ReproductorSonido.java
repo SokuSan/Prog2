@@ -1,35 +1,36 @@
 package paqueteprincipal;
 
-import java.io.File;
+import java.io.BufferedInputStream;
 import javax.sound.sampled.*;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ReproductorSonido {
     private static Clip clipMovimiento;
     private static Clip clipCompletado;
 
     /**
-     * Carga los sonidos desde archivos WAV ubicados en la carpeta de recursos. 
+     * Carga los sonidos desde archivos WAV ubicados en la carpeta de recursos.
      * Este método debe llamarse una vez al inicio del juego para preparar los clips.
      */
     public static void cargarSonidos() {
         try {
-            File archivoMovimiento = new File("recursos/movimiento.wav").getAbsoluteFile();
-            File archivoCompletado = new File("recursos/completado.wav").getAbsoluteFile();
+            InputStream isMovimiento = ReproductorSonido.class.getResourceAsStream("/recursos/movimiento.wav");
+            InputStream isCompletado = ReproductorSonido.class.getResourceAsStream("/recursos/completado.wav");
 
-            if (archivoMovimiento.exists()) {
-                AudioInputStream audioIn = AudioSystem.getAudioInputStream(archivoMovimiento);
+            if (isMovimiento != null) {
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(new BufferedInputStream(isMovimiento));
                 clipMovimiento = AudioSystem.getClip();
                 clipMovimiento.open(audioIn);
             }
 
-            if (archivoCompletado.exists()) {
-                AudioInputStream audioIn = AudioSystem.getAudioInputStream(archivoCompletado);
+            if (isCompletado != null) {
+                AudioInputStream audioIn = AudioSystem.getAudioInputStream(new BufferedInputStream(isCompletado));
                 clipCompletado = AudioSystem.getClip();
                 clipCompletado.open(audioIn);
             }
 
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+        } catch (Exception e) {
             System.err.println("Error al cargar los sonidos: " + e.getMessage());
         }
     }
