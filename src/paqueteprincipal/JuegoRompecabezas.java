@@ -1,6 +1,4 @@
 // Autores: Pedro Hernandez Muñoz, Laia Moñino Peñalva
-
-
 package paqueteprincipal;
 
 import javax.swing.*;
@@ -11,7 +9,7 @@ import javax.swing.border.Border;
 
 public class JuegoRompecabezas extends JFrame {
 
-    private boolean juegoTerminado = false;
+    private boolean juegoTerminado = true;
 
     private Puzzle juego;
     private JPanel panelTablero;
@@ -33,6 +31,7 @@ public class JuegoRompecabezas extends JFrame {
      * @param iniciar
      */
     public JuegoRompecabezas(int filas, int columnas, boolean iniciar) {
+
         this.filas = filas;
         this.columnas = columnas;
 
@@ -55,15 +54,19 @@ public class JuegoRompecabezas extends JFrame {
         agregarTeclado();
 
         JMenuBar menuBar = new JMenuBar();
+        JMenu jocMenu = new JMenu("Joc");
+
         JMenuItem resolverItem = new JMenuItem("Resolver");
         JMenuItem iniciarItem = new JMenuItem("Inicializar");
         JMenuItem estadisticasItem = new JMenuItem("Estadísticas");
         JMenuItem salirItem = new JMenuItem("Salir");
 
-        menuBar.add(iniciarItem);
-        menuBar.add(resolverItem);
-        menuBar.add(estadisticasItem);
-        menuBar.add(salirItem);
+        jocMenu.add(iniciarItem);
+        jocMenu.add(resolverItem);
+        jocMenu.add(estadisticasItem);
+        jocMenu.add(salirItem);
+
+        menuBar.add(jocMenu);
         setJMenuBar(menuBar);
 
         iniciarItem.addActionListener(e -> {
@@ -73,9 +76,17 @@ public class JuegoRompecabezas extends JFrame {
             });
         });
 
-        resolverItem.addActionListener(e -> resolverJuego());
-        estadisticasItem.addActionListener(e -> GestorRanking.mostrarRanking(JuegoRompecabezas.this));
-        salirItem.addActionListener(e -> System.exit(0));
+        resolverItem.addActionListener(e -> {
+            resolverJuego();
+        });
+
+        estadisticasItem.addActionListener(e -> {
+            GestorRanking.mostrarRanking(JuegoRompecabezas.this);
+        });
+
+        salirItem.addActionListener(e -> {
+            System.exit(0);
+        });
 
         panelTablero = new JPanel();
         panelTablero.setLayout(new GridLayout(filas, columnas));

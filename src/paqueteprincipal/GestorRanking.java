@@ -1,6 +1,5 @@
 // Autores: Pedro Hernandez Muñoz, Laia Moñino Peñalva
 
-
 package paqueteprincipal;
 
 import java.awt.Component;
