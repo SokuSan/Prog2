@@ -1,3 +1,6 @@
+// Autores: Pedro Hernandez Muñoz, Laia Moñino Peñalva
+
+
 package paqueteprincipal;
 
 import java.awt.Component;
@@ -53,7 +56,7 @@ public class GestorRanking {
         List<RecordTiempo> lista = new ArrayList<>();
         File archivo = new File(ARCHIVO);
         if (!archivo.exists()) {
-            System.out.println("El archivo no existe, se devolverá lista vacía.");
+            System.out.println("El archivo no existe, se devolvera lista vacia.");
             return lista;
         }
         try (BufferedReader br = new BufferedReader(new FileReader(archivo))) {
@@ -68,7 +71,7 @@ public class GestorRanking {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error al leer el archivo, se devolverá la lista vacía");
+            System.out.println("Error al leer el archivo, se devolvera la lista vacia");
         }
         return lista;
     }

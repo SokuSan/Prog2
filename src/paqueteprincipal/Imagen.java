@@ -1,3 +1,6 @@
+// Autores: Pedro Hernandez Muñoz, Laia Moñino Peñalva
+
+
 package paqueteprincipal;
 
 import java.awt.Image;
@@ -27,7 +30,7 @@ public class Imagen {
         if (this.imagenOriginal != null) {
             this.fragmentos = dividirEnFragmentos(imagenOriginal, tamanio);
         } else {
-            System.err.println("No se pudo cargar la imagen desde InputStream. fragmentos será null.");
+            System.err.println("No se pudo cargar la imagen desde InputStream. fragmentos sera null.");
             this.fragmentos = null;
         }
     }
