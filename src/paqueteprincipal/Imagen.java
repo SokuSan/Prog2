@@ -1,9 +1,9 @@
 // Autores: Pedro Hernandez Muñoz, Laia Moñino Peñalva
 
-
 package paqueteprincipal;
 
 import java.awt.Image;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
@@ -30,7 +30,7 @@ public class Imagen {
         if (this.imagenOriginal != null) {
             this.fragmentos = dividirEnFragmentos(imagenOriginal, tamanio);
         } else {
-            System.err.println("No se pudo cargar la imagen desde InputStream. fragmentos sera null.");
+            System.err.println("No se pudo cargar la imagen desde InputStream. fragmentos será null.");
             this.fragmentos = null;
         }
     }
@@ -79,7 +79,9 @@ public class Imagen {
         if (!(img instanceof BufferedImage)) {
             BufferedImage temp = new BufferedImage(
                     img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            temp.getGraphics().drawImage(img, 0, 0, null);
+            Graphics g = temp.getGraphics();
+            g.drawImage(img, 0, 0, null);
+            g.dispose(); // Liberar recursos gráficos
             img = temp;
         }
 

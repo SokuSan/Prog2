@@ -71,7 +71,7 @@ public class JuegoRompecabezas extends JFrame {
 
         iniciarItem.addActionListener(e -> {
             PuzzleDialog.mostrar(this, medida -> {
-                dispose();
+                setVisible(false);
                 new JuegoRompecabezas(medida, medida, true);
             });
         });
@@ -322,7 +322,7 @@ public class JuegoRompecabezas extends JFrame {
      * @param args
      */
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new JuegoRompecabezas(3, 3));
+         new JuegoRompecabezas(3, 3);
     }
 
     /**
